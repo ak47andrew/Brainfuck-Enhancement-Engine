@@ -22,9 +22,14 @@ string_regex = re.compile(r'^"(.*)"$')
 
 def tokenize(code: str):
     if (out := object_call_regex.match(code)) is not None:
-        tokens: list = [Token(type="identifier", value=out.group(1)), [tokenize(arg.strip()) for arg in out.group(2).split(",")]]
+        tokens: list = [Token(type="identifier", value=out.group(1))] 
+        args = out.group(2).split(",")
+        if args[0] == "":
+            tokens.append([])
+        else:
+            tokens.append([tokenize(arg.strip()) for arg in args])
         return tokens
     if (out := string_regex.match(code)) is not None:
         return Token(type="string", value=out.group(1))
     print(f"[WARNING] [Tokenizer] Unexpected token: {code}")
-    return [Token(type="unknown", value=code)]
+    return Token(type="unknown", value=code)
