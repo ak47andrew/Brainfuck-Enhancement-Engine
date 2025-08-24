@@ -1,13 +1,32 @@
-class InternalType: pass
+from typing import Any
+
+
+class InternalType:
+    value: Any
+
+    def __init__(self, value: Any) -> None:
+        self.value = value
+    
+    def __str__(self) -> str:
+        return str(self.value)
 
 class StringType(InternalType):
     value: str
 
     def __init__(self, value: str):
         self.value = value
-    
-    def __str__(self) -> str:
-        return self.value
+
+class IntegerType(InternalType):
+    value: int
+
+    def __init__(self, value: int):
+        self.value = value
+
+class FloatType(InternalType):
+    value: float
+
+    def __init__(self, value: float):
+        self.value = value
 
 class OutputTokenType(InternalType):
     value: str
