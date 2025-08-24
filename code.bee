@@ -7,3 +7,7 @@ print();
 print("Hello, World!", 100, 2.6);
 print();
 print("\"Something in quotes\"");
+print();
+print(true);
+print();
+print(false);

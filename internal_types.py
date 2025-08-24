@@ -28,6 +28,15 @@ class FloatType(InternalType):
     def __init__(self, value: float):
         self.value = value
 
+class BooleanType(InternalType):
+    value: bool
+
+    def __init__(self, value: bool):
+        self.value = value
+
+    def __str__(self) -> str:
+        return super().__str__().lower()
+
 class OutputTokenType(InternalType):
     value: str
 

@@ -1,6 +1,6 @@
 from typing import Any, Callable
 from tokenizer import Token
-from internal_types import InternalType, StringType, OutputTokenType, IntegerType, FloatType
+from internal_types import InternalType, StringType, OutputTokenType, IntegerType, FloatType, BooleanType
 from memory_manager import MemoryManager
 
 def evaluate_tokens(mm: MemoryManager, tokens):
@@ -27,6 +27,8 @@ def evaluate_internal_type(token: Token) -> InternalType:
         return IntegerType(token.value)
     if token.type == "float":
         return FloatType(token.value)
+    if token.type == "boolean":
+        return BooleanType(token.value)
     raise ValueError(f"Invalid internal type: {token.type} with value: {token.value}")
 
 # === Indetidentifiers ===
@@ -34,7 +36,7 @@ def evaluate_internal_type(token: Token) -> InternalType:
 def print_(mm: MemoryManager, data: list[InternalType | None]):
     output = ""
 
-    string_types = [str(x.value) for x in data if x != None and type(x) in [IntegerType, StringType, FloatType]]
+    string_types = [str(x) for x in data if x != None and type(x) in [IntegerType, StringType, FloatType, BooleanType]]
 
     output_token_types: list[OutputTokenType] = list(filter(lambda x: type(x) == OutputTokenType, data))  # type: ignore
 
