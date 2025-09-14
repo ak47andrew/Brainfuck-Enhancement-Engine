@@ -17,4 +17,9 @@ def pre_compiling(code: str) -> list[str]:
 
 def pre_output(code: str) -> str:
     """Cleanup/optimize code after converted to brainfuck."""
-    return code  # TODO
+    while True:
+        init = code
+        code = code.replace("<>", "").replace("><", "").replace("+-", "").replace("-+", "")
+        if init == code:
+            break
+    return code

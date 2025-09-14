@@ -2,7 +2,7 @@ from typing import Any, Literal
 import re
 
 
-TokenType = Literal["string", "integer", "float", "boolean", "identifier"]
+TokenType = Literal["string", "integer", "float", "boolean", "identifier", "variable_declaration"]
 class Token:
     type: TokenType
     value: Any
@@ -19,10 +19,10 @@ class Token:
 
 object_call_regex = re.compile(r"^\s*([\w\d_]+)\s*\(\s*(.*)\s*\)\s*$")
 string_regex = re.compile(r'^"(.*)"$')
-integer_regex = re.compile(r"^((?:\d)+)$")
-float_regex = re.compile(r"^((?:\d)+\.(?:\d)+)$")
-variable_regex = re.compile(r"^var\s+(.+)\s*=\s*(.+)$")
+integer_regex = re.compile(r"^(\d+)$")
+float_regex = re.compile(r"^(\d+\.\d+)$")
 bool_regex = re.compile(r"^(true|false)$")
+variable_regex = re.compile(r"^var\s+(.+)\s*=\s*(.+)$")
 
 def split_args_respecting_quotes(s: str) -> list[str]:
     """Split arguments by commas, but respect commas inside quotes"""
@@ -71,4 +71,6 @@ def tokenize(code: str):
             tokens.append([tokenize(arg) for arg in args if arg != ""])
 
         return tokens
+    if (out := variable_regex.match(code)) is not None:
+        return [Token(type="variable_declaration", value=out.group(1).strip()), tokenize(out.group(2))]
     return Token(type="identifier", value=code)

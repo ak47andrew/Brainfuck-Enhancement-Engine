@@ -8,7 +8,6 @@ from memory_manager import MemoryManager
 if __name__ == "__main__":
     if len(argv) != 2:
         print("Usage: python gdc_compiler.py <file_path>")
-        argv.append("code.bee")  # FIXME: this is a temporary workaround for testing purposes
     
     file_path = argv[1] if argv[1].endswith(".gdc") else "code.bee"
 
@@ -24,5 +23,7 @@ if __name__ == "__main__":
         output = interpreter.evaluate_tokens(mm, line)
         if type(output) == OutputTokenType:
             bf_code += output.value
-    
+
+    bf_code = cleanup.pre_output(bf_code)
+
     print(f"Brainfuck code:\n{bf_code}")
