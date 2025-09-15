@@ -9,31 +9,31 @@ def evaluate_tokens(mm: MemoryManager, tokens):
     
     if len(tokens) == 0:
         return None
-    if tokens[0].type == "identifier":
+    if tokens[0].token_type == "identifier":
         # Handle function call # TODO: Generalize for classes/other stuff if I add it later
         # Format is: [identifier, [arg1, arg2]]
         obj = identifiers.get(tokens[0].value)
         if obj is None:
             raise ValueError(f"Unknown identifier: {tokens[0].value}")
         return obj(mm, [evaluate_tokens(mm, arg) for arg in tokens[1]])
-    if tokens[0].type == "variable_declaration":
+    if tokens[0].token_type == "variable_declaration":
         # Okay, I moved variable declaration here instead of cramping it into identifier
         # Format is: [variable_name, value]
         return store_variable(mm, tokens[0].value, tokens[1])
     return None
 
 def evaluate_internal_type(mm: MemoryManager, token: Token) -> InternalType:
-    if token.type == "string":
+    if token.token_type == "string":
         return StringType(token.value)
-    if token.type == "integer":
+    if token.token_type == "integer":
         return IntegerType(token.value)
-    if token.type == "float":
+    if token.token_type == "float":
         return FloatType(token.value)
-    if token.type == "boolean":
+    if token.token_type == "boolean":
         return BooleanType(token.value)
-    if token.type == "identifier":
+    if token.token_type == "identifier":
         return load_variable(mm, token.value)
-    raise ValueError(f"Invalid internal type: {token.type} with value: {token.value}")
+    raise ValueError(f"Invalid internal type: {token.token_type} with value: {token.value}")
 
 def store_variable(mm: MemoryManager, name: str, value: Token) -> OutputTokenType:
     """Returns brainfuck code to store that variable in memory"""

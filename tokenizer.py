@@ -4,15 +4,15 @@ import re
 
 TokenType = Literal["string", "integer", "float", "boolean", "identifier", "variable_declaration"]
 class Token:
-    type: TokenType
+    token_type: TokenType
     value: Any
 
-    def __init__(self, type: TokenType, value: Any):
-        self.type = type
+    def __init__(self, token_type: TokenType, value: Any):
+        self.token_type = token_type
         self.value = value
     
     def __repr__(self) -> str:
-        return super().__repr__().replace(">", f" ({self.type=}; {self.value=})>")
+        return super().__repr__().replace(">", f" ({self.token_type=}; {self.value=})>")
     
     def __str__(self) -> str:
         return repr(self)
@@ -53,15 +53,15 @@ def split_args_respecting_quotes(s: str) -> list[str]:
 
 def tokenize(code: str):
     if (out := string_regex.match(code)) is not None:
-        return Token(type="string", value=out.group(1))
+        return Token(token_type="string", value=out.group(1))
     if (out := integer_regex.match(code)) is not None:
-        return Token(type="integer", value=int(out.group(1)))
+        return Token(token_type="integer", value=int(out.group(1)))
     if (out := float_regex.match(code)) is not None:
-        return Token(type="float", value=float(out.group(1)))
+        return Token(token_type="float", value=float(out.group(1)))
     if (out := bool_regex.match(code)) is not None:
-        return Token(type="boolean", value=out.group(1) == "true")
+        return Token(token_type="boolean", value=out.group(1) == "true")
     if (out := object_call_regex.match(code)) is not None:
-        tokens: list = [Token(type="identifier", value=out.group(1))] 
+        tokens: list = [Token(token_type="identifier", value=out.group(1))]
         args_str = out.group(2).strip()
 
         if args_str == "":
@@ -72,5 +72,5 @@ def tokenize(code: str):
 
         return tokens
     if (out := variable_regex.match(code)) is not None:
-        return [Token(type="variable_declaration", value=out.group(1).strip()), tokenize(out.group(2))]
-    return Token(type="identifier", value=code)
+        return [Token(token_type="variable_declaration", value=out.group(1).strip()), tokenize(out.group(2))]
+    return Token(token_type="identifier", value=code)

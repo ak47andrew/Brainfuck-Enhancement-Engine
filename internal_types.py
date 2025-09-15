@@ -1,6 +1,7 @@
 from typing import Any, Self
 from abc import ABC, abstractmethod
 from memory_manager import MemoryManager
+import struct
 
 
 class InternalType(ABC):
@@ -46,13 +47,42 @@ class IntegerType(InternalType):
         super().__init__(value)
     
     def get_memory_layout(self) -> list:
-        if self.value < 0 or self.value > 255:
-            raise ValueError("Values out of 0-255 range can't be set as a variable. This will be fixed in the next version")  # TODO
-        return [self.value]
+        n = self.value
+        if n == 0:
+            return [0, 0]  # Special case: zero
+
+        # Determine sign and work with absolute value
+        sign = 1 if n < 0 else 0
+        n_abs = abs(n)
+
+        # Convert to base-256 (little-endian)
+        bytes_list = []
+        while n_abs > 0:
+            bytes_list.append(n_abs % 256)
+            n_abs //= 256
+
+        # Return [sign, length, byte0, byte1, ...]
+        return [sign, len(bytes_list)] + bytes_list
 
     @classmethod
     def get_value(cls, mm: MemoryManager) -> Self:
-        return cls(mm.get_value())
+        length = mm.get_value(mm.pointer + 1)
+        cells = [mm.get_value(mm.pointer + ind) for ind in range(length + 2)]
+
+        if cells[0] == 0 and cells[1] == 0:
+            p = 0  # Special case: zero
+        else:
+            sign = -1 if cells[0] == 1 else 1
+            length = cells[1]
+
+            # Reconstruct the number from base-256 bytes
+            result = 0
+            for i, byte in enumerate(cells[2:2 + length]):
+                result += byte * (256 ** i)
+
+            p = sign * result
+
+        return cls(p)
 
 class FloatType(InternalType):
     value: float
@@ -61,11 +91,21 @@ class FloatType(InternalType):
         super().__init__(value)
 
     def get_memory_layout(self) -> list:
-        raise ValueError("Floats can't yet be stored in memory. This will be fixed in a newer versions")  # TODO
+        # Pack float into 4 bytes using IEEE 754
+        packed = struct.pack('>f', self.value)
+
+        # Convert bytes to integer values
+        return list(packed)
 
     @classmethod
     def get_value(cls, mm: MemoryManager) -> Self:
-        raise ValueError("Floats can't yet be stored in memory. This will be fixed in a new version")
+        cells = [mm.get_value(mm.pointer + ind) for ind in range(4)]
+
+        # Convert integer values back to bytes
+        byte_data = bytes(cells)
+
+        # Unpack bytes to float
+        return cls(struct.unpack('>f', byte_data)[0])
 
 class BooleanType(InternalType):
     value: bool
