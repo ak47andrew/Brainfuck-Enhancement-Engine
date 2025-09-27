@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved overall argument handling
 - Outlined compilation flow
 - Implemented tokenizer and translation to intermediate language (IL)
+- Implemented custom brainF interpreter. For more info check [devlog](docs/devlog/DEVLOG-0002-custom-brainF-runner.md)
 
 ## [0.0.1] - 2025-09-20
 
