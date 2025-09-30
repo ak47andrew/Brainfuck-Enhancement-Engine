@@ -1,7 +1,7 @@
 from typing import Any, Literal
 import re
 
-TokenType = Literal["integer", "identifier"]
+TokenType = Literal["integer", "string", "identifier"]
 
 
 class Token:
@@ -21,6 +21,7 @@ class Token:
 
 object_call_regex = re.compile(r"^\s*([\w_]+)\s*\(\s*(.*)\s*\)\s*$")
 integer_regex = re.compile(r"^(\d+)$")
+string_regex = re.compile(r"^(\".*\")$")
 variable_regex = re.compile(r"^var\s+(.+)\s*=\s*(.+)$")
 
 
@@ -55,6 +56,8 @@ def split_args_respecting_quotes(s: str) -> list[str]:
 def tokenize(code: str):
     if (out := integer_regex.match(code)) is not None:
         return Token(token_type="integer", value=int(out.group(1)))
+    if (out := string_regex.match(code)) is not None:
+        return Token(token_type="string", value=out.group(1))
     if (out := object_call_regex.match(code)) is not None:
         tokens: list = [Token(token_type="identifier", value=out.group(1))]
         args_str = out.group(2).strip()

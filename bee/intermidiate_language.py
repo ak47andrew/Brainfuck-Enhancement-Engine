@@ -20,6 +20,10 @@ def _convert_token(token: Token) -> list[IL]:
         if token.value < 0 or token.value > 255:
             raise ValueError(f"Token value {token.value} is out of range")
         return [f"LOAD_IMMEDIATE {token.value}"]  # type: ignore
+    elif token.token_type == "string":
+        if len(token.value) > 3:  # "a"
+            raise ValueError(f"Token value {token.value} is too long. Only chars are supported for now")
+        return [f"LOAD_IMMEDIATE {token.value}"]  # type: ignore
     raise ValueError(f"Could not convert: {token}. Invalid type: {token.token_type}")
 
 def _convert_longer(tokens: list[Token | list]) -> list[IL]:  # TODO: better naming :smiling_face_with_tear:
@@ -38,6 +42,14 @@ def _convert_longer(tokens: list[Token | list]) -> list[IL]:  # TODO: better nam
                 output.extend(_convert_token(arg))
 
             output.append("PRINT")
+            return output
+        if tokens[0].value == "put":
+            output = []
+
+            for arg in tokens[1]:
+                output.extend(_convert_token(arg))
+
+            output.append("PUT")
             return output
     raise ValueError(f"Could not convert: {tokens}")
 

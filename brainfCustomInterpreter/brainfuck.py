@@ -177,7 +177,7 @@ class NJBrainfuckInterpreter:
         cleaned = []
         i = 0
         while i < len(code):
-            if code[i] in ['.', ',', '[', ']', '<', '>', '+', '-', '!']:
+            if code[i] in ['.', ',', '[', ']', '<', '>', '+', '-', '!', "#"]:
                 # Handle the special case of ">!" as a single unit
                 if (i + 1 < len(code) and
                         code[i] == ">" and code[i + 1] == "!"):

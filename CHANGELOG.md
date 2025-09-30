@@ -7,9 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- `put` function that works just like `print`, but without newline
+- Support for chars (strings with one character in it)
+
 ## [0.1.1]
 
-# Fixed
+### Fixed
 - Fixed an issue where you could set value out of 0-255 range and loaded value would overflow
 
 ## [0.1.0] - 2025-09-30

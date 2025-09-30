@@ -22,6 +22,18 @@ def translate(mm: MemoryManager, il: IL) -> str:
 
         # Step 3: Repeat until there's still characters
         # TODO: It still only support chars, so we don't need that, but add this for strings and some other stuff later
+    elif il == "PUT":
+        # TODO: maybe spilt into lower-level opcodes? PUT and PRINT is pretty similar
+        # Step 0: Set output type depending on the type of the variable at the top of the stack
+        output += ">!>>>[-]"
+        if mm.get_top_stack() == "int":
+            output += "+"
+
+        # Step 1: Take top of the stack and move to cell 1 using >!
+        output += ">!<[<]>[->!>+<<[<]>]"
+
+        # Step 2: Print
+        output += ".>!>[-]"
     elif il.startswith("LOAD_IMMEDIATE"):
         raw_value: str = il.split()[1]
         if raw_value.isdigit():
@@ -47,5 +59,7 @@ def translate(mm: MemoryManager, il: IL) -> str:
 
         output += ">!<[<]"
         output += "+" * value
+    else:
+        raise ValueError(f"Unrecognized IL command: {il}")
 
     return output
