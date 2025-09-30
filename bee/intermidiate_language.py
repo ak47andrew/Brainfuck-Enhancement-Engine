@@ -17,6 +17,8 @@ def convert_to_il(ast: Token | list) -> list[IL]:
 
 def _convert_token(token: Token) -> list[IL]:
     if token.token_type == "integer":
+        if token.value < 0 or token.value > 255:
+            raise ValueError(f"Token value {token.value} is out of range")
         return [f"LOAD_IMMEDIATE {token.value}"]  # type: ignore
     raise ValueError(f"Could not convert: {token}. Invalid type: {token.token_type}")
 

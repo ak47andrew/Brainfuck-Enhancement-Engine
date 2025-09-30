@@ -218,3 +218,5 @@ __marimo__/
 test.py
 .diff
 *.bee
+docs/temp.md
+brainfCustomInterpreter/test.bf
