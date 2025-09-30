@@ -1,19 +1,33 @@
-class Tape:
-    pointer: int
-    used_cells: set[int]
+from typing import Literal
+from collections import deque
 
-    def __init__(self):
-        self.used_cells = set()
-        self.pointer = 0
+VALUE_TYPES = Literal["int", "char"]
 
-    def set_cells(self, indexes: list[int]):
-        self.used_cells = self.used_cells.union(indexes)
+class Variable:
+    name: str
+    variable_type: VALUE_TYPES
 
-    def move_pointer(self, index: int):
-        self.pointer = index
+    def __init__(self, name: str, variable_type: VALUE_TYPES):
+        self.name = name
+        self.variable_type = variable_type
+
 
 class MemoryManager:
-    tape: Tape
+    heap: list[Variable]
+    stack: deque[VALUE_TYPES]
 
     def __init__(self):
-        self.tape = Tape()
+        self.heap = []
+        self.stack = deque()
+
+    def push_stack(self, value: VALUE_TYPES):
+        self.stack.append(value)
+
+    def pop_stack(self) -> VALUE_TYPES:
+        return self.stack.pop()
+
+    def get_top_stack(self) -> VALUE_TYPES:
+        return self.stack[-1]
+
+    def store_var(self, name: str, value: VALUE_TYPES):
+        self.heap.append(Variable(name, value))

@@ -72,4 +72,6 @@ if __name__ == "__main__":
     # Step 6. Optimize brainfuck
     bf_code = pre_output(bf_code)
 
-    print(f"Brainfuck code:\n{bf_code}")
+    if config["debug"]:
+        print(f"Brainfuck code:")
+    print(bf_code)

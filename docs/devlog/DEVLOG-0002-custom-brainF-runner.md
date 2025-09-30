@@ -3,7 +3,7 @@
 **Date:** 25.09.2025 (Thu)<br>
 **Mood:** Calm and focused, yet a bit tired<br>
 **Writing start time:** 21:30<br>
-**Writing end time:** <br>
+**Writing end time:** *Oopsie, forgot to add xD*<br>
 **Current song playing:** ["Good Riddance" by Ellie Minibot, Shoomimi](https://music.yandex.ru/track/142549342?utm_source=desktop&utm_medium=copy_link)
 (x6 or something like that)
 

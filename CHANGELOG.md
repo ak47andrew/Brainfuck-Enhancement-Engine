@@ -7,12 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.0] - 2025-09-30
+
 ### Added
-- Added `--debug` flag for CLI
-- Improved overall argument handling
-- Outlined compilation flow
-- Implemented tokenizer and translation to intermediate language (IL)
-- Implemented custom brainF interpreter. For more info check [devlog](docs/devlog/DEVLOG-0002-custom-brainF-runner.md)
+- **First Alpha Release**: Basic compiler pipeline is now functional!
+- Complete compilation flow: BEE → Intermediate Language → NJ → Brainfuck
+- Tokenizer and parser for BEE syntax
+- Intermediate Language (IL) representation
+- Custom Brainfuck interpreter/runner
+- IL to NJ language translation
+- `print` function with automatic newline
+- Support for integers (0-255 range)
+- CLI with `--debug` flag for development
+- Initial project structure and documentation
 
 ## [0.0.1] - 2025-09-20
 
