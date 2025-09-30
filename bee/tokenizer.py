@@ -65,7 +65,7 @@ def tokenize(code: str):
         if args_str == "":
             tokens.append([])
         else:
-            args = args_str.split(",")
+            args = split_args_respecting_quotes(args_str)
             tokens.append([tokenize(arg) for arg in args if arg != ""])
 
         return tokens

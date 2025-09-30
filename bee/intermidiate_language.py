@@ -4,7 +4,8 @@ from bee.tokenizer import Token
 
 IL = Literal[
     "LOAD_IMMEDIATE",
-    "PRINT"
+    "PRINT",
+    "PUT"
 ]
 
 def convert_to_il(ast: Token | list) -> list[IL]:
@@ -21,9 +22,15 @@ def _convert_token(token: Token) -> list[IL]:
             raise ValueError(f"Token value {token.value} is out of range")
         return [f"LOAD_IMMEDIATE {token.value}"]  # type: ignore
     elif token.token_type == "string":
-        if len(token.value) > 3:  # "a"
-            raise ValueError(f"Token value {token.value} is too long. Only chars are supported for now")
-        return [f"LOAD_IMMEDIATE {token.value}"]  # type: ignore
+        # if len(token.value) > 3:  # "a"
+        #     raise ValueError(f"Token value {token.value} is too long. Only chars are supported for now")
+        # return [f"LOAD_IMMEDIATE {token.value}"]  # type: ignore
+        # FIXME !!! THIS IS HACKY APPROACH BECAUSE WE'RE CURRENTLY ONLY PRINTING AND PUTTING STRING! FIX THIS ASAP IN THE NEXT RELEASE!
+        output = []
+        for char in token.value[1:-1]:
+            output.append(f"LOAD_IMMEDIATE \"{char}\"")
+            output.append("PUT")
+        return output[:-1]
     raise ValueError(f"Could not convert: {token}. Invalid type: {token.token_type}")
 
 def _convert_longer(tokens: list[Token | list]) -> list[IL]:  # TODO: better naming :smiling_face_with_tear:

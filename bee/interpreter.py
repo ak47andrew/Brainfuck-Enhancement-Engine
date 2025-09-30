@@ -35,7 +35,7 @@ def translate(mm: MemoryManager, il: IL) -> str:
         # Step 2: Print
         output += ".>!>[-]"
     elif il.startswith("LOAD_IMMEDIATE"):
-        raw_value: str = il.split()[1]
+        raw_value: str = " ".join(il.split()[1:])
         if raw_value.isdigit():
             python_value = int(raw_value)
         elif raw_value.startswith('"') and raw_value.endswith('"'):
