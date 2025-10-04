@@ -1,7 +1,7 @@
 from typing import Literal
 from collections import deque
 
-VALUE_TYPES = Literal["int", "char"]
+VALUE_TYPES = Literal["int", "char", "none"]
 
 class Variable:
     name: str
@@ -24,9 +24,13 @@ class MemoryManager:
         self.stack.append(value)
 
     def pop_stack(self) -> VALUE_TYPES:
+        if not self.stack:
+            raise IndexError("pop_stack called on empty stack")
         return self.stack.pop()
 
     def get_top_stack(self) -> VALUE_TYPES:
+        if not self.stack:
+            raise IndexError("Cannot get top of empty stack")
         return self.stack[-1]
 
     def store_var(self, name: str, value: VALUE_TYPES):

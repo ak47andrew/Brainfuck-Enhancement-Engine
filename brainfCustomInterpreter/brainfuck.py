@@ -12,7 +12,7 @@ import queue
 import time
 
 try:
-    from msvcrt import getch
+    from msvcrt import getch # type: ignore
 except ImportError:
     # Fallback for Unix-like systems
     def getch():
@@ -28,7 +28,7 @@ except ImportError:
 
 
 class InputThread(threading.Thread):
-    def __init__(self, input_queue):
+    def __init__(self, input_queue: queue.Queue[int]):
         super().__init__()
         self.input_queue = input_queue
         self.daemon = True
@@ -47,7 +47,7 @@ class InputThread(threading.Thread):
                     self.input_queue.put(ord(char))
                 # Small delay to prevent CPU spinning
                 time.sleep(0.01)
-            except:
+            except Exception:
                 break
 
     def stop(self):
@@ -56,14 +56,11 @@ class InputThread(threading.Thread):
 
 class NJBrainfuckInterpreter:
     def __init__(self):
-        self.cells = {}
-        for i in range(-1000, 1001):  # Pre-initialize a range of cells
-            self.cells[i] = 0
-
-        self.input_queue = queue.Queue()
+        self.cells = {i: 0 for i in range(-1000, 1001)}
+        self.input_queue: queue.Queue[int] = queue.Queue()
         self.input_thread = InputThread(self.input_queue)
-        self.codeptr = 0
-        self.cellptr = 0
+        self.codeptr: int = 0
+        self.cellptr: int = 0
         self.bracemap = {}
 
         # Initialize special cells
@@ -77,7 +74,7 @@ class NJBrainfuckInterpreter:
         """Update stdin readiness flag (cell 4)"""
         self.cells[4] = 1 if self.input_queue.empty() else 0
 
-    def execute(self, filename):
+    def execute(self, filename: str):
         try:
             with open(filename, "r") as f:
                 code = f.read()
@@ -88,7 +85,7 @@ class NJBrainfuckInterpreter:
         finally:
             self.input_thread.stop()
 
-    def evaluate(self, code):
+    def evaluate(self, code: str):
         code = self.cleanup(list(code))
         self.bracemap = self.buildbracemap(code)
 
@@ -103,12 +100,6 @@ class NJBrainfuckInterpreter:
                 break
 
             command = code[self.codeptr]
-            # print(len(self.input_queue.queue))
-            # print(self.cells[0])
-            # print(self.cells[1])
-            # print(self.cells[4])
-            # print()
-            # time.sleep(0.01)
 
             # Handle multi-character commands first
             if (self.codeptr + 1 < len(code) and
@@ -172,30 +163,30 @@ class NJBrainfuckInterpreter:
         # Return termination code from cell 2
         return self.cells[2]
 
-    def cleanup(self, code):
+    def cleanup(self, code: list[str]):
         # Keep only valid commands including '!' for the special jump
-        cleaned = []
+        cleaned: list[str] = []
         i = 0
         while i < len(code):
             if code[i] in ['.', ',', '[', ']', '<', '>', '+', '-', '!', "#"]:
                 # Handle the special case of ">!" as a single unit
                 if (i + 1 < len(code) and
                         code[i] == ">" and code[i + 1] == "!"):
-                    cleaned.append(">")
-                    cleaned.append("!")
+                    cleaned.extend((">", "!"))
                     i += 1  # Skip the next character since we handled it
                 else:
                     cleaned.append(code[i])
             i += 1
         return ''.join(cleaned)
 
-    def buildbracemap(self, code):
-        temp_bracestack, bracemap = [], {}
+    def buildbracemap(self, code: str):
+        temp_bracestack: list[int] = []
+        bracemap: dict[int, int] = {}
 
         for position, command in enumerate(code):
             if command == "[":
                 temp_bracestack.append(position)
-            if command == "]":
+            elif command == "]":
                 if not temp_bracestack:
                     raise SyntaxError("Unmatched ']'")
                 start = temp_bracestack.pop()

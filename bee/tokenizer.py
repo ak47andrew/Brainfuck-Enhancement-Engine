@@ -2,8 +2,10 @@ from typing import Any, Literal
 import re
 
 TokenType = Literal["integer", "string", "identifier"]
+# TODO: maybe add a whole bunch of custom exceptions?
 
 
+# TODO: I'm actually dumb :3 Extend this class to get rid of `type: ignore` everywhere and make it more... one-way or smth like that
 class Token:
     token_type: TokenType
     value: Any
@@ -13,7 +15,7 @@ class Token:
         self.value = value
 
     def __repr__(self) -> str:
-        return super().__repr__().replace(">", f" ({self.token_type=}; {self.value=})>")
+        return f"Token(token_type={self.token_type!r}, value={self.value!r})"
 
     def __str__(self) -> str:
         return repr(self)
@@ -27,8 +29,8 @@ variable_regex = re.compile(r"^var\s+(.+)\s*=\s*(.+)$")
 
 def split_args_respecting_quotes(s: str) -> list[str]:
     """Split arguments by commas, but respect commas inside quotes"""
-    parts = []
-    current = []
+    parts: list[str] = []
+    current: list[str] = []
     in_string = False
     escaped = False
 
@@ -59,14 +61,14 @@ def tokenize(code: str):
     if (out := string_regex.match(code)) is not None:
         return Token(token_type="string", value=out.group(1))
     if (out := object_call_regex.match(code)) is not None:
-        tokens: list = [Token(token_type="identifier", value=out.group(1))]
+        tokens = [Token(token_type="identifier", value=out.group(1))]
         args_str = out.group(2).strip()
 
         if args_str == "":
-            tokens.append([])
+            tokens.append([]) # type: ignore
         else:
             args = split_args_respecting_quotes(args_str)
-            tokens.append([tokenize(arg) for arg in args if arg != ""])
+            tokens.append([tokenize(arg) for arg in args if arg != ""]) # type: ignore
 
         return tokens
     # if (out := variable_regex.match(code)) is not None:

@@ -1,8 +1,6 @@
 from bee.memory_manager import MemoryManager, VALUE_TYPES
-from bee.intermidiate_language import IL
 
-
-def translate(mm: MemoryManager, il: IL) -> str:
+def translate(mm: MemoryManager, il: str) -> str:
     output = ""
 
     if il == "PRINT":
@@ -36,12 +34,13 @@ def translate(mm: MemoryManager, il: IL) -> str:
         output += ".>!>[-]"
     elif il.startswith("LOAD_IMMEDIATE"):
         raw_value: str = " ".join(il.split()[1:])
-        if raw_value.isdigit():
+        try:
             python_value = int(raw_value)
-        elif raw_value.startswith('"') and raw_value.endswith('"'):
-            python_value = raw_value[1:-1]
-        else:
-            raise ValueError("Immediate value isn't recognized")
+        except ValueError as e:
+            if raw_value.startswith('"') and raw_value.endswith('"'):
+                python_value = raw_value[1:-1]
+            else:
+                raise ValueError("Immediate value isn't recognized") from e
 
         internal_type: VALUE_TYPES
         value: int
@@ -49,11 +48,9 @@ def translate(mm: MemoryManager, il: IL) -> str:
         if isinstance(python_value, str):
             value = ord(python_value)
             internal_type = "char"
-        elif isinstance(python_value, int):
+        else:  # int
             value = python_value
             internal_type = "int"
-        else:
-            raise ValueError(f"Unknown value type {type(python_value)}: {python_value}")
 
         mm.push_stack(internal_type)
 

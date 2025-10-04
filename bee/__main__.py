@@ -4,7 +4,7 @@ from typing import Any
 from bee.interpreter import translate
 from bee.memory_manager import MemoryManager
 from bee.tokenizer import tokenize
-from bee.intermidiate_language import convert_to_il, optimize_il
+from bee.intermidiate_language import convert_to_il, optimize_il # type: ignore
 from bee.cleanup import pre_compiling, pre_output
 
 def process_args() -> dict[str, Any] | None:
@@ -18,13 +18,14 @@ def process_args() -> dict[str, Any] | None:
     else:
         debug = False
 
-    if len(args) != 1:
-        return None
-
-    return {
-        "file": args[0],
-        "debug": debug,
-    }
+    return (
+        None
+        if len(args) != 1
+        else {
+            "file": args[0],
+            "debug": debug,
+        }
+    )
 
 if __name__ == "__main__":
     config = process_args()
@@ -44,28 +45,33 @@ if __name__ == "__main__":
         print(f"Pre-compiling file successfully. Got:\n{"\n".join(lines)}\n")
 
     # Step 2. Tokenize them
-    tokens = [tokenize(line) for line in lines]
+    tokens = []
+    for idx, line in enumerate(lines):
+        try:
+            tokens.append(tokenize(line)) # type: ignore
+        except Exception as e:
+            print(f"Error tokenizing line {idx+1}: {line}\n{e}")
+            if config.get("debug"):
+                import traceback
+                traceback.print_exc()
     if config["debug"]:
-        print(f"Tokenizing file successfully. Got:\n{"\n".join(map(str, tokens))}\n")
+        print(f"Tokenizing file successfully. Got:\n{"\n".join(map(str, tokens))}\n") # type: ignore
 
     # Step 3. Convert to IL
     il = []
-    for token in tokens:
-        il.extend(convert_to_il(token))
+    for token in tokens: # type: ignore
+        il.extend(convert_to_il(token)) # type: ignore
     if config["debug"]:
-        print(f"Converted AST successfully. Got:\n{"\n".join(il)}\n")
+        print(f"Converted AST successfully. Got:\n{"\n".join(il)}\n") # type: ignore
 
     # Step 4. Optimize IL
-    il = optimize_il(il)
+    il = optimize_il(il) # type: ignore
     if config["debug"]:
         print(f"Optimized IL successfully. Got:\n{"\n".join(il)}\n")
 
-    # Step 5. Convert IL to brainfuck
-    bf_code = ""
     mm = MemoryManager()
 
-    for op in il:
-        bf_code += translate(mm, op) + "\n"
+    bf_code = "".join(translate(mm, op) + "\n" for op in il)
     if config["debug"]:
         print(f"Translated IL successfully. Unoptimized bf code:\n{bf_code}\n")
 
@@ -73,5 +79,5 @@ if __name__ == "__main__":
     bf_code = pre_output(bf_code)
 
     if config["debug"]:
-        print(f"Brainfuck code:")
+        print("Brainfuck code:")
     print(bf_code)

@@ -1,6 +1,4 @@
-import re
-
-comment_regex = re.compile(r"#.*$", re.MULTILINE | re.UNICODE)
+# comment_regex = re.compile(r"#.*$", re.MULTILINE | re.UNICODE)  # FIXME: have an issue with `#` inside of string literals. Readd with fix later
 
 
 def pre_compiling(code: str) -> list[str]:
@@ -8,10 +6,10 @@ def pre_compiling(code: str) -> list[str]:
     # TODO: When I'll have loops and if statements - add lines together
 
     # Remove comments
-    code = comment_regex.sub("", code)
-    code = code.splitlines()
+    # code = comment_regex.sub("", code)
+    code_lines: list[str] = code.splitlines()
 
-    return [line.rstrip(";") for line in code if line != ""]
+    return [line.removesuffix(";") for line in code_lines if line != ""]
 
 
 def pre_output(code: str) -> str:
