@@ -22,8 +22,11 @@ def _convert_longer(token: Token) -> list[str]:  # type: ignore # TODO: better n
         # TODO: make it more extendable
         output: list[str] = []
 
-        for arg in token.args: # pyright: ignore[reportOptionalIterable]
+        for ind, arg in enumerate(token.args): # pyright: ignore[reportArgumentType, reportOptionalIterable]
             output.extend(_convert_token(arg))
+            if ind != len(token.args) - 1 and output[-1].startswith("LOAD_IMMEDIATE \""): # pyright: ignore[reportArgumentType]
+                output.extend(("PUT", "LOAD_IMMEDIATE \" \"", "PUT"))  # FIXME: more of a hacky approach :3
+                # Fuck... I'm going to hate myself tomorrow morning 0_0
 
         if token.value == "print":
             output.append("PRINT")

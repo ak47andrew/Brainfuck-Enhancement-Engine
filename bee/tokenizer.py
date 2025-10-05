@@ -16,7 +16,7 @@ class Token:
         self.args = args
 
     def __repr__(self) -> str:
-        return f"Token(token_type={self.token_type!r}, value={self.value!r})"
+        return f"Token(token_type={self.token_type!r}, value={self.value!r}, args={self.args!r})"
 
     def __str__(self) -> str:
         return repr(self)

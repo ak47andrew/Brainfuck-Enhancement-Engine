@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Made Token model more stable code-wise by removing nested lists and using args
 
+### Fixed
+- Now `print` and `put` functions properly hadle several arguments
+
 ## [0.2.0] - 2025-09-30
 
 ### Added
