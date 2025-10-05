@@ -3,8 +3,8 @@ from typing import Any
 
 from bee.interpreter import translate
 from bee.memory_manager import MemoryManager
-from bee.tokenizer import tokenize
-from bee.intermidiate_language import convert_to_il, optimize_il # type: ignore
+from bee.tokenizer import tokenize, Token
+from bee.intermidiate_language import convert_to_il, optimize_il
 from bee.cleanup import pre_compiling, pre_output
 
 def process_args() -> dict[str, Any] | None:
@@ -45,27 +45,27 @@ if __name__ == "__main__":
         print(f"Pre-compiling file successfully. Got:\n{"\n".join(lines)}\n")
 
     # Step 2. Tokenize them
-    tokens = []
+    tokens: list[Token] = []
     for idx, line in enumerate(lines):
         try:
-            tokens.append(tokenize(line)) # type: ignore
+            tokens.append(tokenize(line))
         except Exception as e:
             print(f"Error tokenizing line {idx+1}: {line}\n{e}")
             if config.get("debug"):
                 import traceback
                 traceback.print_exc()
     if config["debug"]:
-        print(f"Tokenizing file successfully. Got:\n{"\n".join(map(str, tokens))}\n") # type: ignore
+        print(f"Tokenizing file successfully. Got:\n{"\n".join(map(str, tokens))}\n")
 
     # Step 3. Convert to IL
-    il = []
-    for token in tokens: # type: ignore
-        il.extend(convert_to_il(token)) # type: ignore
+    il: list[str] = []
+    for token in tokens:
+        il.extend(convert_to_il(token))
     if config["debug"]:
-        print(f"Converted AST successfully. Got:\n{"\n".join(il)}\n") # type: ignore
+        print(f"Converted AST successfully. Got:\n{"\n".join(il)}\n")
 
     # Step 4. Optimize IL
-    il = optimize_il(il) # type: ignore
+    il = optimize_il(il)
     if config["debug"]:
         print(f"Optimized IL successfully. Got:\n{"\n".join(il)}\n")
 

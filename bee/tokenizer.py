@@ -1,18 +1,19 @@
-from typing import Any, Literal
+from typing import Any, Literal, Optional, Self
 import re
 
-TokenType = Literal["integer", "string", "identifier"]
+TokenType = Literal["integer", "string", "identifier", "function_call"]
 # TODO: maybe add a whole bunch of custom exceptions?
 
 
-# TODO: I'm actually dumb :3 Extend this class to get rid of `type: ignore` everywhere and make it more... one-way or smth like that
 class Token:
     token_type: TokenType
     value: Any
+    args: Optional[list[Self]]
 
-    def __init__(self, token_type: TokenType, value: Any):
+    def __init__(self, token_type: TokenType, value: Any, args: Optional[list[Self]] = None):
         self.token_type = token_type
         self.value = value
+        self.args = args
 
     def __repr__(self) -> str:
         return f"Token(token_type={self.token_type!r}, value={self.value!r})"
@@ -55,22 +56,21 @@ def split_args_respecting_quotes(s: str) -> list[str]:
     return parts
 
 
-def tokenize(code: str):
+def tokenize(code: str) -> Token:
     if (out := integer_regex.match(code)) is not None:
         return Token(token_type="integer", value=int(out.group(1)))
     if (out := string_regex.match(code)) is not None:
         return Token(token_type="string", value=out.group(1))
     if (out := object_call_regex.match(code)) is not None:
-        tokens = [Token(token_type="identifier", value=out.group(1))]
         args_str = out.group(2).strip()
 
         if args_str == "":
-            tokens.append([]) # type: ignore
+            args = []
         else:
-            args = split_args_respecting_quotes(args_str)
-            tokens.append([tokenize(arg) for arg in args if arg != ""]) # type: ignore
+            args_splitted = split_args_respecting_quotes(args_str)
+            args = [tokenize(arg) for arg in args_splitted if arg != ""]
 
-        return tokens
+        return Token(token_type="function_call", value=out.group(1), args=args)
     # if (out := variable_regex.match(code)) is not None:
     #     return [Token(token_type="variable_declaration", value=out.group(1).strip()), tokenize(out.group(2))]
     # return Token(token_type="identifier", value=code)

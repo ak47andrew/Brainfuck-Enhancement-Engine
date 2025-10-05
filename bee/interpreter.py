@@ -21,7 +21,7 @@ def translate(mm: MemoryManager, il: str) -> str:
         # Step 3: Repeat until there's still characters
         # TODO: It still only support chars, so we don't need that, but add this for strings and some other stuff later
     elif il == "PUT":
-        # TODO: maybe spilt into lower-level opcodes? PUT and PRINT is pretty similar
+        # TODO: maybe split into lower-level opcodes? PUT and PRINT are pretty similar
         # Step 0: Set output type depending on the type of the variable at the top of the stack
         output += ">!>>>[-]"
         if mm.get_top_stack() == "int":

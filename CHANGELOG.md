@@ -5,7 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.0]
+## [Unreleased]
+
+### Changed
+- Made Token model more stable code-wise by removing nested lists and using args
+
+## [0.2.0] - 2025-09-30
 
 ### Added
 - `put` function that works just like `print`, but without newline
@@ -15,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed incorrect tokenizing when using commas in strings
 - Fixed incorrect interpreting when having space as a value in LOAD_IMMEDIATE (when you had strings with spaces in it)
 
-## [0.1.1]
+## [0.1.1] - 2025-09-30
 
 ### Fixed
 - Fixed an issue where you could set value out of 0-255 range and loaded value would overflow
