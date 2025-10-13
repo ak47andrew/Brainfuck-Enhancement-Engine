@@ -220,3 +220,4 @@ test.py
 *.bee
 docs/temp.md
 brainfCustomInterpreter/test.bf
+media/
