@@ -1,11 +1,11 @@
 from sys import argv
 from typing import Any
 
-from bee.interpreter import translate
-from bee.memory_manager import MemoryManager
-from bee.tokenizer import tokenize, Token
-from bee.intermidiate_language import convert_to_il, optimize_il
-from bee.cleanup import pre_compiling, pre_output
+from .interpreter import translate
+from .memory_manager import MemoryManager
+from .tokenizer import tokenize, Token
+from .intermidiate_language import convert_to_il, optimize_il
+from .cleanup import pre_compiling, pre_output
 
 def process_args() -> dict[str, Any] | None:
     args = argv[1:]

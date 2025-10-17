@@ -1,3 +1,3 @@
-import bee
-import brainfCustomInterpreter
-import visualizations
+import src.bee
+import src.brainfCustomInterpreter
+import src.visualizations

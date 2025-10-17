@@ -1,4 +1,4 @@
-from bee.tokenizer import Token
+from .tokenizer import Token
 
 def convert_to_il(ast: Token) -> list[str]:
     return _convert_longer(ast) if ast.args is not None else _convert_token(ast)

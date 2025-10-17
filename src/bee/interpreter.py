@@ -1,4 +1,4 @@
-from bee.memory_manager import MemoryManager, VALUE_TYPES
+from .memory_manager import MemoryManager, VALUE_TYPES
 
 def translate(mm: MemoryManager, il: str) -> str:
     output = ""

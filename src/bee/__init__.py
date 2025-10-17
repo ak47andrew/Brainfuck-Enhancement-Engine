@@ -1,1 +1,1 @@
-from bee import cleanup, intermidiate_language, interpreter, memory_manager, tokenizer
+from . import cleanup, intermidiate_language, interpreter, memory_manager, tokenizer
