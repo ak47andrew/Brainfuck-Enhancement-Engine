@@ -1,27 +1,35 @@
-from .memory_manager import MemoryManager, VALUE_TYPES
+from .memory_manager import MemoryManager
+
+def _store_string(data: str) -> str:
+    pass
+
+def _store_integer(data: int) -> str:
+    pass
+
+def _move_stack_top() -> str:
+    output = ""
+
+    # Step 0: Move to the SC cell (index 5)
+    output += ">!>>>>>"
+
+    # Step 1: Copy to the cell on the right (6) and to the -1 cell (aka the right border cell of the first stack value)
+    output += "[->+>!<+>>>>>>]"
+
+    # Step 2: Restore SC cell
+    output += ">[-<+>]"
+
+    # Step 3: Move to the -1 cell
+    output += ">!<"
+
+    # Step 4: SPECIAL SAUCE: moving left to the adress
+    output += "[[[[<]<+>>[>]]<-]<[<]<-]>"
+
+    return output
 
 def translate(mm: MemoryManager, il: str) -> str:
     output = ""
 
-    if il == "PRINT":
-        # Step 0: Set output type depending on the type of the variable at the top of the stack
-        output += ">!>>>[-]"
-        if mm.get_top_stack() == "int":
-            output += "+"
-
-        # Step 1: Take top of the stack and move to cell 1 using >!
-        output += ">!<[<]>[->!>+<<[<]>]"
-
-        # Step 2: Print
-        output += "."
-
-        # Step 3: output newline
-        output += "\n>!>>>[-]<<[-]++++++++++.[-]"
-
-        # Step 3: Repeat until there's still characters
-        # TODO: It still only support chars, so we don't need that, but add this for strings and some other stuff later
-    elif il == "PUT":
-        # TODO: maybe split into lower-level opcodes? PUT and PRINT are pretty similar
+    if il == "STDOUT_ALL":
         # Step 0: Set output type depending on the type of the variable at the top of the stack
         output += ">!>>>[-]"
         if mm.get_top_stack() == "int":
@@ -33,29 +41,38 @@ def translate(mm: MemoryManager, il: str) -> str:
         # Step 2: Print
         output += ".>!>[-]"
     elif il.startswith("LOAD_IMMEDIATE"):
-        raw_value: str = " ".join(il.split()[1:])
-        try:
-            python_value = int(raw_value)
-        except ValueError as e:
-            if raw_value.startswith('"') and raw_value.endswith('"'):
-                python_value = raw_value[1:-1]
-            else:
-                raise ValueError("Immediate value isn't recognized") from e
+        il = il.removeprefix("LOAD_IMMEDIATE ")
+        output = _move_stack_top()
+        if il.startswith("STRING"):
+            il.removeprefix("STRING ")
+            output += _store_string(il)
+        elif il.startswith("INT"):
+            il.removeprefix("INT ")
+            output += _store_integer(int(il))
 
-        internal_type: VALUE_TYPES
-        value: int
+        # raw_value: str = " ".join(il.split()[1:])
+        # try:
+        #     python_value = int(raw_value)
+        # except ValueError as e:
+        #     if raw_value.startswith('"') and raw_value.endswith('"'):
+        #         python_value = raw_value[1:-1]
+        #     else:
+        #         raise ValueError("Immediate value isn't recognized") from e
 
-        if isinstance(python_value, str):
-            value = ord(python_value)
-            internal_type = "char"
-        else:  # int
-            value = python_value
-            internal_type = "int"
+        # internal_type: VALUE_TYPES
+        # value: int
 
-        mm.push_stack(internal_type)
+        # if isinstance(python_value, str):
+        #     value = ord(python_value)
+        #     internal_type = "char"
+        # else:  # int
+        #     value = python_value
+        #     internal_type = "int"
 
-        output += ">!<[<]"
-        output += "+" * value
+        # mm.push_stack(internal_type)
+
+        # output += ">!<[<]"
+        # output += "+" * value
     else:
         raise ValueError(f"Unrecognized IL command: {il}")
 
