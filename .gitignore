@@ -219,7 +219,7 @@ test.py
 .diff
 *.bee
 docs/temp.md
-brainfCustomInterpreter/test.bf
 media/
 *.mp4
 *.bf
+*.nj
