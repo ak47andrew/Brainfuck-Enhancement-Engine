@@ -5,7 +5,8 @@ from .interpreter import translate
 from .memory_manager import MemoryManager
 from .tokenizer import tokenize, Token
 from .intermidiate_language import convert_to_il, optimize_il
-from .cleanup import pre_compiling, pre_output
+from .cleanup import pre_compiling
+from .preprocessor import preprocess
 
 def process_args() -> dict[str, Any] | None:
     args = argv[1:]
@@ -44,7 +45,12 @@ if __name__ == "__main__":
     if config["debug"]:
         print(f"Pre-compiling file successfully. Got:\n{"\n".join(lines)}\n")
 
-    # Step 2. Tokenize them
+    # Step 2. Preprocessing
+    lines = preprocess(lines)
+    if config["debug"]:
+        print(f"Preprocessing file successfully. Got:\n{"\n".join(lines)}\n")
+
+    # Step 3. Tokenize them
     tokens: list[Token] = []
     for idx, line in enumerate(lines):
         try:
@@ -57,14 +63,14 @@ if __name__ == "__main__":
     if config["debug"]:
         print(f"Tokenizing file successfully. Got:\n{"\n".join(map(str, tokens))}\n")
 
-    # Step 3. Convert to IL
+    # Step 4. Convert to IL
     il: list[str] = []
     for token in tokens:
         il.extend(convert_to_il(token))
     if config["debug"]:
         print(f"Converted AST successfully. Got:\n{"\n".join(il)}\n")
 
-    # Step 4. Optimize IL
+    # Step 5. Optimize IL
     il = optimize_il(il)
     if config["debug"]:
         print(f"Optimized IL successfully. Got:\n{"\n".join(il)}\n")
@@ -74,9 +80,6 @@ if __name__ == "__main__":
     bf_code = "".join(translate(mm, op) + "\n" for op in il)
     if config["debug"]:
         print(f"Translated IL successfully. Unoptimized bf code:\n{bf_code}\n")
-
-    # Step 6. Optimize brainfuck
-    bf_code = pre_output(bf_code)
 
     if config["debug"]:
         print("Brainfuck code:")
