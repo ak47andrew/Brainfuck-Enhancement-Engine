@@ -13,7 +13,7 @@ def _convert_token(token: Token) -> list[str]:
         # FIXME !!! THIS IS HACKY APPROACH BECAUSE WE'RE CURRENTLY ONLY PRINTING AND PUTTING STRING! FIX THIS ASAP IN THE NEXT RELEASE!
         output: list[str] = []
         for char in token.value[1:-1]:
-            output.extend((f'LOAD_IMMEDIATE \"{char}\"', "PUT"))
+            output.extend((f'LOAD_IMMEDIATE \"{char}\"', "PRINT_SINGLE"))
         return output[:-1] if output else ["LOAD_IMMEDIATE \"\0\""]
     raise ValueError(f"Could not convert: {token}. Invalid type: {token.token_type}")
 
@@ -25,13 +25,15 @@ def _convert_longer(token: Token) -> list[str]:  # type: ignore # TODO: better n
         for ind, arg in enumerate(token.args): # pyright: ignore[reportArgumentType, reportOptionalIterable]
             output.extend(_convert_token(arg))
             if ind != len(token.args) - 1 and output[-1].startswith("LOAD_IMMEDIATE \""): # pyright: ignore[reportArgumentType]
-                output.extend(("PUT", "LOAD_IMMEDIATE \" \"", "PUT"))  # FIXME: more of a hacky approach :3
+                output.extend(("PRINT_SINGLE", "LOAD_IMMEDIATE \" \"", "PRINT_SINGLE"))  # FIXME: more of a hacky approach :3
                 # Fuck... I'm going to hate myself tomorrow morning 0_0
 
         if token.value == "print":
-            output.append("PRINT")
+            output.append("PRINT_SINGLE")
+            output.append("LOAD_IMMEDIATE \"\n\"")
+            output.append("PRINT_SINGLE")
         elif token.value == "put":
-            output.append("PUT")
+            output.append("PRINT_SINGLE")
         else:
             raise ValueError(f"Unknown opcode {token.value}")
 

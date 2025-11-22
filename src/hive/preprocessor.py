@@ -56,6 +56,7 @@ def preprocess(lines: list[str]) -> list[str]:
                     for var in range(macros.args["start"], macros.args["end"] + 1):
                         for line in macros.lines:
                             output.append(line.replace(f"$({macros.args['var']})", str(var)))
+                    macros = None
                 case _:
                     raise ValueError(f"Unknown macro name: {parts[1]}")  # That's probably will never happen, but just so everyone here is alright
     
