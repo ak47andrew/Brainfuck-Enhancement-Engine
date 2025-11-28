@@ -215,8 +215,6 @@ class NJBrainfuckInterpreter:
     
     def show_debug_step(self):
         command = self.code[self.codeptr - 1]
-        if command.endswith("!"):
-            command = self.code[self.codeptr - 2] + "!"
         """Display debug information about the current execution state"""
         print("\n" + "="*50)
         print(f"DEBUG: Executed command '{command}'")
@@ -244,12 +242,13 @@ class NJBrainfuckInterpreter:
         for addr, description in special_cells.items():
             pointer_indicator = " <--" if addr == self.cellptr else ""
             print(f"  [{addr}]: {self.cells[addr]} - {description}{pointer_indicator}")
-        
+        print(f"Special cell: {self.special_cell}")
+        print(f"Cell check: {self.check_special}")
         
         print("="*50)
         print("\nPress Enter to step...")
         print("Press Ctrl + C to terminate the program")
-        print("Enter `run` to run the program to the breakpoint character (#)")
+        print("Enter `run` to run the program to the breakpoint character ($)")
 
 def debug(interpreter: NJBrainfuckInterpreter):
     is_running = False

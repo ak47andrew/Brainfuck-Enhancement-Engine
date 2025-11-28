@@ -35,3 +35,6 @@ class MemoryManager:
 
     def store_var(self, name: str, value: VALUE_TYPES):
         self.heap.append(Variable(name, value))
+
+    def get_stack_size(self) -> int:
+        return len(self.stack)

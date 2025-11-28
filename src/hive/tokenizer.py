@@ -24,7 +24,7 @@ class Token:
 
 object_call_regex = re.compile(r"^\s*([\w_]+)\s*\(\s*(.*)\s*\)\s*$")
 integer_regex = re.compile(r"^(\d+)$")
-string_regex = re.compile(r"^(\".*\")$")
+string_regex = re.compile(r"^(\".*\")$")  # TODO: fix newlines
 variable_regex = re.compile(r"^var\s+(.+)\s*=\s*(.+)$")
 
 
@@ -57,10 +57,11 @@ def split_args_respecting_quotes(s: str) -> list[str]:
 
 
 def tokenize(code: str) -> Token:
+
     if (out := integer_regex.match(code)) is not None:
         return Token(token_type="integer", value=int(out.group(1)))
     if (out := string_regex.match(code)) is not None:
-        return Token(token_type="string", value=out.group(1))
+        return Token(token_type="string", value=out.group(1).replace("\\n", "\n"))
     if (out := object_call_regex.match(code)) is not None:
         args_str = out.group(2).strip()
 
