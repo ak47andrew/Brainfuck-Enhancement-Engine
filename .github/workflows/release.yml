@@ -55,8 +55,7 @@ jobs:
 
     - name: Build the binary with PyInstaller
       run: |
-        # Replace 'your_tool' with the name of your main CLI Python script
-        pyinstaller --onefile bee/__main__.py -n bee
+        pyinstaller --onefile src/hive/__main__.py -n bee
 
     - name: Create GitHub Release & Upload Asset
       uses: softprops/action-gh-release@v1
