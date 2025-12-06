@@ -37,8 +37,12 @@ jobs:
     name: Build Binary and Create Release
     # This job only runs on tag pushes, not pull requests
     if: startsWith(github.ref, 'refs/tags/')
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     # needs: test # Ensure tests pass before building
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v4
@@ -46,7 +50,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.11"
+        python-version: "3.14"
 
     - name: Install dependencies and PyInstaller
       run: |
