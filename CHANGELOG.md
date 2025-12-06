@@ -5,7 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3] - 2025-10-15
+## [Unreleased]
+
+## [0.4.0] - 2025-12-06
+
+### Added
+- Added debug mode into NJ interpreter now triggered with `--debug` argument
+- Extended NJ specification and interpreter with special cell that can be accessed from anywhere on the tape and instructions to handle it (see [devlog](docs/devlog/DEVLOG-0004-recent-advencements.md))
+- Added preprocessing step to the pipeline, ability to use macroses and first "loop" macros
+- Changed the way IL generates from `print` statements, making it more optimized
+
+### Change
+- Renamed `brainfCustomInterpreter` folder into a `NJInterpreter`; Also changed the translator's name to `hive` to remove ambiguity with `bee` language
+- Moved all the code into `src` folder and setup proper python package system
+- Moved `main.py` to `__main__.py`. Now command to run the interpreter is `python -m src.hive <filename> [--debug]`
+
+### Fixed
+- Now `\n` in strings works properly
+- Fixed an issue when `PRINT_ALL` didn't correctly handled multiple values on the stack
+
+### Deprecated
+- Visualizations are no longer supported and updated due the lack of quality
+
+## [0.3.0] - 2025-10-15
 
 ### Added
 - Added two python scripts for visualazing translation process and NJ's execution (second one is still quite buggy tho)
@@ -53,5 +75,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1] - 2025-09-20
 
 ### Added
-- Initial commit for the new implementation of BEE compiler. For more info check corresponding 
+- Initial commit for the new implementation of HIVE compiler. For more info check corresponding 
 [devlog](docs/devlog/DEVLOG-0001-rewrite.md)
