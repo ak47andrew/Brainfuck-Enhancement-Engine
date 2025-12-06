@@ -8,41 +8,20 @@ on:
     branches: [ main ]
 
 jobs:
-# TODO: readd when there will be something to actually test
-#  test:
-#    name: Test on Python ${{ matrix.python-version }}
-#    runs-on: ubuntu-latest
-#    strategy:
-#      matrix:
-#        python-version: ['3.9', '3.10', '3.11'] # Test multiple Python versions
-#
-#    steps:
-#    - uses: actions/checkout@v4
-#    - name: Set up Python ${{ matrix.python-version }}
-#      uses: actions/setup-python@v4
-#      with:
-#        python-version: ${{ matrix.python-version }}
-#    - name: Install dependencies
-#      run: |
-#        python -m pip install --upgrade pip
-#        pip install -r requirements.txt
-#        # If you use pytest:
-#        pip install pytest
-#    - name: Run tests
-#      run: |
-#        # Replace this with your test command, e.g.:
-#        python -m pytest
-
-  build-and-release:
-    name: Build Binary and Create Release
-    # This job only runs on tag pushes, not pull requests
+  build:
+    name: Build Binary
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ${{ matrix.os }}
-    # needs: test # Ensure tests pass before building
-
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            artifact_name: bee-linux
+            binary_name: bee
+          - os: windows-latest
+            artifact_name: bee-windows.exe
+            binary_name: bee.exe
 
     steps:
     - uses: actions/checkout@v4
@@ -61,16 +40,39 @@ jobs:
       run: |
         pyinstaller --onefile src/hive/__main__.py -n bee
 
-    - name: Create GitHub Release & Upload Asset
+    - name: Rename binary for Windows (if needed)
+      if: matrix.os == 'windows-latest'
+      run: |
+        mv dist/bee.exe dist/bee-windows.exe || echo "Already named correctly"
+
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: dist/${{ matrix.artifact_name }}
+
+  release:
+    name: Create Release
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    needs: [build]  # Wait for all build jobs to complete
+    permissions:
+      contents: write  # Required for creating releases
+
+    steps:
+    - name: Download all build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: dist/
+
+    - name: List downloaded artifacts
+      run: ls -la dist/
+
+    - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        # This will use the tag name as the release title
-        tag_name: ${{ github.ref }}
-        # This will generate release notes automatically based on your commits
+        tag_name: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
         generate_release_notes: true
-        # This will attach the binary you built
         files: |
-          dist/bee
-      env:
-        # This token is provided automatically by GitHub Actions
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          dist/**/*
